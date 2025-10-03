@@ -4,7 +4,8 @@ import AutoLoad from "@fastify/autoload";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { configDotenv } from "dotenv";
-import prisma from "./db.js";
+import prisma from "./services/db.js";
+import { gMailer as emailer } from "./services/email.js";
 
 /**
  *
@@ -38,9 +39,10 @@ async function build(opts = {}) {
       tags: [{ name: "v1", description: "versioning related end-points" }],
       components: {
         securitySchemes: {
-          bearerAuth: {
+          http: {
             type: "http",
             scheme: "bearer",
+            bearerFormat: "JWT",
           },
         },
       },
@@ -88,7 +90,8 @@ async function build(opts = {}) {
     }
   });
 
-  // load decorator here
+  fastify.decorate("emailer", emailer);
+
   fastify.decorate("refreshtoken", async function (request, reply) {
     try {
       const result = await request.refreshTokenVerify();

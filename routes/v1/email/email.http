@@ -1,12 +1,12 @@
 @host=http://localhost:8080
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NTk0NzY4NTB9.ecjfHxFUkW9Ov6S733aSbi83wkPo0Wx-kM12wAntqiA
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5NTAzMTM5LCJleHAiOjE3NTk1ODk1Mzl9.h9HTwGLUyEZh7LGf0uNUXpAowC6wjZyhlrf30pbXM68
 
 ###
 POST {{host}}/v1/email
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{"from":"ace@user.com","recipient":"hello@agis.it","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
+{"from":"ace@user.com","recipient":"teddy@qnptech.com,twahyono@gmail.com","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
 
 ###
 GET {{host}}/v1/email 
