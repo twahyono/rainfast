@@ -49,9 +49,14 @@ async function routes(fastify, opts) {
 
   fastify.get(
     "/:id",
-
+    {
+      schema: {
+        params: { type: "object", properties: { id: { type: "string" } } },
+      },
+    },
     async function (request, reply) {
-      return request.user;
+      const id = request.params.id;
+      return await fastify.prisma.emailDelivery.findUnique({ where: { id } });
     }
   );
 

@@ -6,12 +6,12 @@ POST {{host}}/v1/email
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{"from":"ace@user.com","recipient":"teddy@qnptech.com,twahyono@gmail.com","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
+{"from":"ace@user.com","recipient":"twahyono@gmail.com","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
 
 ###
 GET {{host}}/v1/email 
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/v1/email/:id
+GET {{host}}/v1/email/0bf21468-991e-4078-9c5d-d646376fdc70
 Authorization: Bearer {{token}}

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { configDotenv } from "dotenv";
 import prisma from "./services/db.js";
-import { gMailer as emailer } from "./services/email.js";
+import mailer from "./services/email.js";
 
 /**
  *
@@ -80,6 +80,8 @@ async function build(opts = {}) {
     },
   });
 
+  fastify.register(mailer, { mailer: "gmail" });
+
   // load decorator here
   fastify.decorate("authenticate", async function (request, reply) {
     try {
@@ -89,8 +91,6 @@ async function build(opts = {}) {
       return reply.send(err);
     }
   });
-
-  fastify.decorate("emailer", emailer);
 
   fastify.decorate("refreshtoken", async function (request, reply) {
     try {

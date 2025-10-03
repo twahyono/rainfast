@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { configDotenv } from "dotenv";
+import fp from "fastify-plugin";
 configDotenv();
 
 export const gMailer = nodemailer.createTransport({
@@ -14,7 +15,7 @@ export const gMailer = nodemailer.createTransport({
 });
 
 // Create a test account or replace with real credentials.
-const etherealMailer = nodemailer.createTransport({
+export const etherealMailer = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
   secure: false, // true for 465, false for other ports
@@ -24,4 +25,7 @@ const etherealMailer = nodemailer.createTransport({
   },
 });
 
-export default etherealMailer;
+export default fp(function (fastify, { mailer = "gmail" }, done) {
+  fastify.decorate("emailer", mailer === "gmail" ? gMailer : etherealMailer);
+  done();
+});
