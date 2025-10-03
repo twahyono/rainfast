@@ -2,16 +2,16 @@
 @token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NTk0NzY4NTB9.ecjfHxFUkW9Ov6S733aSbi83wkPo0Wx-kM12wAntqiA
 
 ###
-POST {{host}}/v1/user
+POST {{host}}/v1/email
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{"email":"roys@user.com","password":"hello"}
+{"from":"ace@user.com","recipient":"hello@agis.it","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
 
 ###
-GET {{host}}/v1/user 
+GET {{host}}/v1/email 
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/v1/user/1
+GET {{host}}/v1/email/:id
 Authorization: Bearer {{token}}
