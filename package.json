@@ -32,6 +32,10 @@
     "starter",
     "bootstrap"
   ],
-  "author": "twahyono@yahoo.com",
+  "contributors": [
+    "muhdadangs@gmail.com",
+    "twahyono@yahoo.com",
+    "syarif.a.a@gmail.com"
+  ],
   "license": "MIT"
 }
