@@ -30,6 +30,7 @@ async function routes(fastify, opts) {
                 strHtml: { type: "string" },
                 createdAt: { type: "string" },
                 updatedAt: { type: "string" },
+                status: { type: "string" },
               },
             },
           },
@@ -48,9 +49,14 @@ async function routes(fastify, opts) {
 
   fastify.get(
     "/:id",
-
+    {
+      schema: {
+        params: { type: "object", properties: { id: { type: "string" } } },
+      },
+    },
     async function (request, reply) {
-      return request.user;
+      const id = request.params.id;
+      return await fastify.prisma.emailDelivery.findUnique({ where: { id } });
     }
   );
 
@@ -66,26 +72,72 @@ async function routes(fastify, opts) {
             subject: { type: "string" },
             strText: { type: "string" },
             strHtml: { type: "string" },
+            attachments: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  filename: { type: "string" },
+                  path: { type: "string" },
+                  href: { type: "string" },
+                },
+              },
+            },
           },
         },
         response: {
           200: {
             type: "object",
             properties: {
-              id: { type: "string" },
-              createdAt: { type: "string" },
-              updatedAt: { type: "string" },
+              message: { type: "string" },
+              emailDeliveryId: { type: "string" },
             },
           },
         },
       },
     },
     async function (request, reply) {
-      const { from, recipient, subject, strText, strHtml } = request.body;
-      let data = await fastify.prisma.emailDelivery.create({
-        data: { id: uuidV4(), from, recipient, subject, strText, strHtml },
-      });
-      return data;
+      try {
+        const { from, recipient, subject, strText, strHtml } = request.body;
+        const emailDeliveryId = uuidV4();
+        fastify.emailer
+          .sendMail({
+            from,
+            to: recipient,
+            subject,
+            text: strText, // plain‑text body
+            html: strHtml, // HTML body
+          })
+          .then((info) => {
+            console.log("Message sent:", info.messageId);
+            fastify.prisma.emailDelivery
+              .update({
+                where: { id: emailDeliveryId },
+                data: {
+                  status: "sent",
+                },
+              })
+              .catch(fastify.log.error);
+          });
+
+        fastify.prisma.emailDelivery
+          .create({
+            data: {
+              id: emailDeliveryId,
+              from,
+              recipient,
+              subject,
+              strText,
+              strHtml,
+              status: "accepted",
+            },
+          })
+          .catch(fastify.log.error);
+        return { message: "Email accepted", emailDeliveryId };
+      } catch (e) {
+        fastify.log.error(e);
+        throw e;
+      }
     }
   );
 }
