@@ -2,24 +2,6 @@
 import build from "./app.js";
 import { test } from "node:test";
 
-test('requests the "/" route', async (t) => {
-  t.plan(2);
-  const app = await build();
-
-  const response = await app.inject({
-    method: "GET",
-    url: "/",
-  });
-
-  t.assert.strictEqual(
-    response.statusCode,
-    200,
-    "returns a status code of 200"
-  );
-  const jsonResult = await response.json();
-  t.assert.strictEqual(jsonResult.version, "0.01.0");
-});
-
 test("should work with fetch", async (t) => {
   t.plan(3);
 
@@ -39,5 +21,5 @@ test("should work with fetch", async (t) => {
     "application/json; charset=utf-8"
   );
   const jsonResult = await response.json();
-  t.assert.strictEqual(jsonResult.version, "0.01.0");
+  t.assert.strictEqual(jsonResult.version, "0.02.0");
 });

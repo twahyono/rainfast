@@ -2,7 +2,7 @@ import build from "./app.js";
 
 const app = await build({
   logger: {
-    level: "info",
+    level: "warn",
     transport: {
       target: "pino-pretty",
     },

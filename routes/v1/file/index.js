@@ -128,7 +128,7 @@ async function routes(fastify, opts) {
 
   fastify.get("/streams", function (request, reply) {
     const stream = fs.createReadStream(
-      path.join(__dirname, "../../../form.pdf")
+      path.join(__dirname, "../../../upload/sample.pdf")
     );
     reply.header("Content-Type", "application/octet-stream");
     reply.send(stream);
@@ -136,7 +136,7 @@ async function routes(fastify, opts) {
 
   fastify.get("/buffer", function (request, reply) {
     fs.readFile(
-      path.join(__dirname, "../../../form.pdf"),
+      path.join(__dirname, "../../../upload/sample.pdf"),
       (err, fileBuffer) => {
         reply.send(err || fileBuffer);
       }
