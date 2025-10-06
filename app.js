@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { configDotenv } from "dotenv";
 import prisma from "./services/db.js";
-import mailer from "./services/email.js";
+import mailer from "./plugins/email.js";
+import azureblob from "./plugins/azureblob.js";
 
 /**
  *
@@ -81,8 +82,14 @@ async function build(opts = {}) {
   });
 
   fastify.register(mailer, { mailer: "gmail" });
+  fastify.register(azureblob, {
+    containerName: "test",
+    azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  });
+  fastify.register(import("@fastify/sensible"));
 
   // load decorator here
+  // authenticate routes with jwt
   fastify.decorate("authenticate", async function (request, reply) {
     try {
       const result = await request.jwtVerify();
@@ -92,6 +99,7 @@ async function build(opts = {}) {
     }
   });
 
+  // authenticate routes for get new access token with existing refreshtoken
   fastify.decorate("refreshtoken", async function (request, reply) {
     try {
       const result = await request.refreshTokenVerify();

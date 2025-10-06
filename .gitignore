@@ -1,3 +1,8 @@
 .env
 node_modules
-/generated/prisma
+generated/
+prisma/migrations
+*.pdf
+*.xml
+*.dtd
+*.http

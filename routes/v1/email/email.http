@@ -6,7 +6,7 @@ POST {{host}}/v1/email
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{"from":"ace@user.com","recipient":"twahyono@gmail.com","subject":"new version 2 update","strText":"Hi,\n We release update for our saas."}
+{"from":"ace@user.com","recipient":"twahyono@gmail.com","subject":"new version 2 update","strText":"Hi,\n We release update for our saas.","attachments":[{"filename":"hello.txt","content":"Hello, World!"},{"filename":"readme.md","href":"https://github.com/twahyono/rainfast/blob/main/README.md"}]}
 
 ###
 GET {{host}}/v1/email 
