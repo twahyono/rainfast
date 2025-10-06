@@ -1,12 +1,11 @@
 @host=http://localhost:8080
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NTk0NzY4NTB9.ecjfHxFUkW9Ov6S733aSbi83wkPo0Wx-kM12wAntqiA
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYmFkc0B1c2VyLmNvbSIsIm5hbWUiOm51bGwsImlkIjoxfSwiaWF0IjoxNzU5NjQyNDEzLCJleHAiOjE3NTk3Mjg4MTN9.-yiswB_Y_8ENM9uKbTYc4FeiXfbw4dukYpYuVcefLK4
 
 ###
-POST {{host}}/v1/user
-Authorization: Bearer {{token}}
+POST {{host}}/v1/user/register
 Content-Type: application/json
 
-{"email":"roys@user.com","password":"hello"}
+{"email":"bads@user.com","password":"hello"}
 
 ###
 GET {{host}}/v1/user 

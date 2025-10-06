@@ -23,10 +23,10 @@ app.listen({ port: 8080, host: "0.0.0.0" }, function (err, address) {
 async function checkDatabaseConnection() {
   try {
     await app.prisma.$connect();
-    app.log.info("✅ Database connection established");
+    app.log.info("Database connection established");
     return true;
   } catch (error) {
-    app.log.error("❌ Database connection failed:", error);
+    app.log.error("Database connection failed:", error);
     return false;
   }
 }

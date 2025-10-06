@@ -1,9 +1,10 @@
-async function routes(fastify, opts) {
-  fastify.addHook("onRequest", fastify.authenticate);
+import bcrypt from "bcrypt";
 
+async function routes(fastify, opts) {
   fastify.get(
     "/",
     {
+      onRequest: fastify.authenticate,
       schema: {
         response: {
           200: {
@@ -36,6 +37,7 @@ async function routes(fastify, opts) {
   fastify.get(
     "/:id",
     {
+      onRequest: fastify.authenticate,
       schema: {
         params: { type: "object", properties: { id: { type: "number" } } },
         response: {
@@ -54,10 +56,11 @@ async function routes(fastify, opts) {
     },
     async function (request, reply) {
       try {
-        const users = await fastify.prisma.user.findUnique({
+        const user = await fastify.prisma.user.findUnique({
           where: { id: request.params.id },
         });
-        return users;
+        if (!user) reply.notFound();
+        return user;
       } catch (e) {
         fastify.log.error(e);
         throw e;
@@ -66,7 +69,7 @@ async function routes(fastify, opts) {
   );
 
   fastify.post(
-    "/",
+    "/register",
     {
       schema: {
         body: {
@@ -94,9 +97,12 @@ async function routes(fastify, opts) {
     },
     async function (request, reply) {
       try {
-        const { email, password } = request.body;
+        const { email, password, name } = request.body;
+
+        const saltRound = 14;
+        const hash = await bcrypt.hash(password, saltRound);
         let user = await fastify.prisma.user.create({
-          data: { email, password },
+          data: { email, password: hash, name },
         });
         return user;
       } catch (e) {
