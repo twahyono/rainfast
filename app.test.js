@@ -2,7 +2,7 @@
 import build from "./app.js";
 import { test } from "node:test";
 
-test("should work with fetch", async (t) => {
+test("Version check", async (t) => {
   t.plan(3);
 
   const fastify = await build();

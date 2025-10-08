@@ -1,5 +1,5 @@
 import { pipeline } from "node:stream/promises";
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { v1 as uuidv1 } from "uuid";
 import { fileURLToPath } from "url";
@@ -126,7 +126,8 @@ async function routes(fastify, opts) {
     }
   );
 
-  fastify.get("/streams", function (request, reply) {
+  fastify.get("/streams", async function (request, reply) {
+    await new Promise((res) => setTimeout(res, 100));
     const stream = fs.createReadStream(
       path.join(__dirname, "../../../upload/sample.pdf")
     );
@@ -134,13 +135,16 @@ async function routes(fastify, opts) {
     reply.send(stream);
   });
 
-  fastify.get("/buffer", function (request, reply) {
-    fs.readFile(
-      path.join(__dirname, "../../../upload/sample.pdf"),
-      (err, fileBuffer) => {
-        reply.send(err || fileBuffer);
-      }
-    );
+  fastify.get("/buffer", async function (request, reply) {
+    try {
+      await new Promise((res) => setTimeout(res, 100));
+      const fileBuffer = await fs.readFile(
+        path.join(__dirname, "../../../upload/sample.pdf")
+      );
+      reply.send(fileBuffer);
+    } catch (err) {
+      reply.send(err);
+    }
   });
 }
 

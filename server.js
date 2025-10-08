@@ -2,7 +2,7 @@ import build from "./app.js";
 
 const app = await build({
   logger: {
-    level: "warn",
+    level: "info",
     transport: {
       target: "pino-pretty",
     },
@@ -16,17 +16,21 @@ app.listen({ port: 8080, host: "0.0.0.0" }, function (err, address) {
     process.exit(1);
   }
   // Server is now listening on ${address}
-  checkDatabaseConnection();
+  checkDatabaseConnection(app);
 });
 
 // Check database connection
-async function checkDatabaseConnection() {
+async function checkDatabaseConnection(app) {
   try {
-    await app.prisma.$connect();
+    /**
+     * @type {import('@prisma/client').PrismaClient} Instance of PrismaClient
+     */
+    const prisma = app.prisma;
+    await prisma.$connect().then(app.log.info);
     app.log.info("Database connection established");
     return true;
   } catch (error) {
     app.log.error("Database connection failed:", error);
-    return false;
+    return true;
   }
 }
