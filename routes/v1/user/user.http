@@ -5,7 +5,7 @@
 POST {{host}}/v1/user/register
 Content-Type: application/json
 
-{"email":"bads@user.com","password":"hello"}
+{"email":"bads@user.com","password":"hello1d3"}
 
 ###
 GET {{host}}/v1/user 

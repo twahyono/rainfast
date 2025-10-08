@@ -78,7 +78,10 @@ async function routes(fastify, opts) {
           properties: {
             name: { type: "string" },
             email: { type: "string" },
-            password: { type: "string" },
+            password: {
+              type: "string",
+              pattern: "^(?=.*[A-Za-z])(?=.*d)[A-Za-zd]{8,}$",
+            },
           },
         },
         response: {
