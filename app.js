@@ -40,13 +40,19 @@ async function build(opts = {}) {
       tags: [{ name: "v1", description: "versioning related end-points" }],
       components: {
         securitySchemes: {
-          http: {
+          bearerAuth: {
             type: "http",
             scheme: "bearer",
             bearerFormat: "JWT",
           },
         },
       },
+      security: [
+        // Apply the security globally or to specific routes
+        {
+          bearerAuth: [], // Use the same name as above
+        },
+      ],
       externalDocs: {
         url: "https://swagger.io",
         description: "Find more info here",
