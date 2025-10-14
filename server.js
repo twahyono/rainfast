@@ -1,12 +1,12 @@
 import build from "./app.js";
-
+import loggerOptions from "./configs/loggerOptions.js";
 const app = await build({
-  logger: {
+  logger: loggerOptions /*{
     level: "info",
     transport: {
       target: "pino-pretty",
     },
-  },
+  },*/,
 });
 
 // Run the server!
@@ -26,7 +26,7 @@ async function checkDatabaseConnection(app) {
      * @type {import('@prisma/client').PrismaClient} Instance of PrismaClient
      */
     const prisma = app.prisma;
-    await prisma.$connect().then(app.log.info);
+    await prisma.$connect();
     app.log.info("Database connection established");
     return true;
   } catch (error) {

@@ -53,9 +53,30 @@ async function routes(fastify, opts) {
 
   fastify.get(
     "/refreshtoken",
-    { onRequest: fastify.refreshtoken },
+    {
+      onRequest: fastify.refreshtoken,
+      schema: {
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              token: { type: "string" },
+            },
+          },
+        },
+      },
+    },
     async function (request, reply) {
-      throw new Error("No documents found");
+      try {
+        const user = await request.user;
+        console.log(user);
+        const accessToken = await reply.jwtSign({ user });
+
+        return { token: accessToken };
+      } catch (e) {
+        fastify.log.error(e);
+        throw e;
+      }
     }
   );
 }
