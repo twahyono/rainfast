@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { register } from "../services/metrics.js";
+//import { register } from "../services/metrics.js";
 async function routes(fastify, _opts) {
   const packageJson = JSON.parse(
     await readFile(new URL("../version.json", import.meta.url))
@@ -31,7 +31,7 @@ async function routes(fastify, _opts) {
       },
     },
     async function (_request, _reply) {
-      return await register.metrics();
+      return await fastify.metrics.metrics();
     }
   );
 }

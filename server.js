@@ -1,12 +1,7 @@
 import build from "./app.js";
 import loggerOptions from "./configs/loggerOptions.js";
 const app = await build({
-  logger: loggerOptions /*{
-    level: "info",
-    transport: {
-      target: "pino-pretty",
-    },
-  },*/,
+  logger: loggerOptions,
 });
 
 // Run the server!

@@ -7,10 +7,7 @@ import { configDotenv } from "dotenv";
 import prisma from "./services/db.js";
 import mailer from "./plugins/email.js";
 import azureblob from "./plugins/azureblob.js";
-import {
-  httpRequestsTotal,
-  httpRequestDurationSeconds,
-} from "./services/metrics.js";
+import metrics from "./plugins/metrics.js";
 
 /**
  *
@@ -116,6 +113,7 @@ async function build(opts = {}) {
     containerName: "test",
     azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
   });
+  fastify.register(metrics);
   fastify.register(import("@fastify/sensible"));
 
   // load decorator here
@@ -140,29 +138,6 @@ async function build(opts = {}) {
   });
 
   fastify.decorate("prisma", prisma);
-  // Track request start time
-  fastify.addHook("onRequest", async (request, reply) => {
-    request.startTime = process.hrtime.bigint(); // high-precision timestamp
-  });
-  fastify.addHook("onResponse", async (req, res) => {
-    httpRequestsTotal.inc({
-      method: req.method,
-      path: req.url,
-      status: res.statusCode,
-    });
-    const endTime = process.hrtime.bigint();
-    const duration = Number(endTime - req.startTime) / 1e6;
-    httpRequestDurationSeconds.observe(
-      {
-        method: req.method,
-        path: req.url,
-        status: res.statusCode,
-      },
-      duration
-    );
-    console.log(duration);
-    //latency.set(res.responseTime);
-  });
 
   return fastify;
 }

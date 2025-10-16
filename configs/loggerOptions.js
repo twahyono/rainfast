@@ -6,7 +6,7 @@ export const serializers = {
   res: function (reply) {
     return {
       statusCode: reply.statusCode,
-      //responseTime: reply.elapsedTime,
+      //elapsedTime: reply.elapsedTime,
     };
   },
 };

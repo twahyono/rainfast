@@ -19,3 +19,6 @@ Authorization: Bearer {{refreshToken}}
 
 ###
 GET {{host}}/metrics
+
+###
+GET {{host}}/

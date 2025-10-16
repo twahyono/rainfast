@@ -1,4 +1,5 @@
 import client from "prom-client";
+import fp from "fastify-plugin";
 const register = new client.Registry();
 
 // Example metric: HTTP request counter
@@ -19,4 +20,25 @@ register.registerMetric(httpRequestsTotal);
 register.registerMetric(httpRequestDurationSeconds);
 // Optional: default metrics (CPU, memory, etc.)
 client.collectDefaultMetrics({ register });
-export { register, httpRequestsTotal, httpRequestDurationSeconds };
+
+export default fp(function (fastify, opts, done) {
+  fastify.decorate("metrics", register);
+  fastify.addHook("onResponse", async (req, res) => {
+    httpRequestsTotal.inc({
+      method: req.method,
+      path: req.url,
+      status: res.statusCode,
+    });
+
+    const duration = res.elapsedTime;
+    httpRequestDurationSeconds.observe(
+      {
+        method: req.method,
+        path: req.url,
+        status: res.statusCode,
+      },
+      duration
+    );
+  });
+  done();
+});
