@@ -22,7 +22,7 @@ register.registerMetric(httpRequestDurationSeconds);
 client.collectDefaultMetrics({ register });
 
 export default fp(function (fastify, opts, done) {
-  fastify.decorate("metrics", register);
+  fastify.decorateReply("metrics", async () => register.metrics());
   fastify.addHook("onResponse", async (req, res) => {
     httpRequestsTotal.inc({
       method: req.method,
