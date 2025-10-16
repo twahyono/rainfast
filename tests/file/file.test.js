@@ -11,7 +11,25 @@ test("File download", async (t) => {
 
   await fastify.listen();
   const url = "http://localhost:" + fastify.server.address().port;
-  const response = await fetch(url + "/v1/file/buffer");
+  // create a temporary fixture file in upload/ for the test
+  const fs = await import("fs");
+  const path = await import("path");
+  const uploadDir = path.join(process.cwd(), "upload");
+  const fixtureName = "sample.bin";
+  const fixturePath = path.join(uploadDir, fixtureName);
+  // ensure upload dir exists
+  try {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  } catch (e) {}
+  // write a small fixture
+  fs.writeFileSync(fixturePath, Buffer.from("hello world"));
+
+  const response = await fetch(url + "/v1/file/buffer/" + fixtureName);
+
+  // cleanup fixture
+  try {
+    fs.unlinkSync(fixturePath);
+  } catch (e) {}
 
   t.assert.strictEqual(response.status, 200);
   t.assert.strictEqual(
