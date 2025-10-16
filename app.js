@@ -7,6 +7,10 @@ import { configDotenv } from "dotenv";
 import prisma from "./services/db.js";
 import mailer from "./plugins/email.js";
 import azureblob from "./plugins/azureblob.js";
+import {
+  httpRequestsTotal,
+  httpRequestDurationSeconds,
+} from "./services/metrics.js";
 
 /**
  *
@@ -18,7 +22,27 @@ async function build(opts = {}) {
   /**
    * @type {import('fastify').FastifyInstance} Instance of Fastify
    */
-  const fastify = Fastify(opts);
+  const fastify = Fastify({
+    ...opts,
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+          path: request.routerPath,
+          parameters: request.params,
+          headers: request.headers,
+        };
+      },
+      res(reply) {
+        return {
+          statusCode: reply.statusCode,
+          responseTime: reply.getResponseTime(),
+        };
+      },
+    },
+    redact: ["req.headers.authorization", "body.password"],
+  });
 
   // Path configuration
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -116,6 +140,29 @@ async function build(opts = {}) {
   });
 
   fastify.decorate("prisma", prisma);
+  // Track request start time
+  fastify.addHook("onRequest", async (request, reply) => {
+    request.startTime = process.hrtime.bigint(); // high-precision timestamp
+  });
+  fastify.addHook("onResponse", async (req, res) => {
+    httpRequestsTotal.inc({
+      method: req.method,
+      path: req.url,
+      status: res.statusCode,
+    });
+    const endTime = process.hrtime.bigint();
+    const duration = Number(endTime - req.startTime) / 1e6;
+    httpRequestDurationSeconds.observe(
+      {
+        method: req.method,
+        path: req.url,
+        status: res.statusCode,
+      },
+      duration
+    );
+    console.log(duration);
+    //latency.set(res.responseTime);
+  });
 
   return fastify;
 }

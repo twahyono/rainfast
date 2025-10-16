@@ -1,16 +1,21 @@
 @host=http://localhost:8080
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzYwNDMwMTM2LCJleHAiOjE3NjA1MTY1MzZ9.ccIXTBBRvM2wf9Lr2rp9pqaN_98MxWZPE3ONieb4BfA
-
-###
+# @name login
 POST {{host}}/v1/auth/signin
 Content-Type: application/json
 
 {"email":"bads@user.com","password":"hello"}
 
 ###
+@token = {{login.response.body.token}}
+@refreshToken= {{login.response.body.refreshToken}}
+
+###
 GET {{host}}/v1/sample 
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/v1/auth/accesstoken
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NjE5ODI0NTB9.TFf-QzxwIbUt4wo3k0PH7s25PWjGt3x1If2D8imicLM
+GET {{host}}/v1/auth/refreshtoken
+Authorization: Bearer {{refreshToken}}
+
+###
+GET {{host}}/metrics
