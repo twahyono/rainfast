@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 async function routes(fastify, opts) {
   fastify.post(
     "/signin",
@@ -23,20 +24,26 @@ async function routes(fastify, opts) {
       },
     },
     async function (request, reply) {
-      const { email } = request.body;
+      const { email, password } = request.body;
+      const user = await fastify.prisma.user.findUnique({ where: { email } });
+
+      if (!user) throw fastify.httpErrors.unauthorized();
+      const auth = await bcrypt.compare(password, user.password);
+      if (!auth) throw fastify.httpErrors.unauthorized();
+
       const [token, refreshToken] = await Promise.all([
         reply.jwtSign({
           user: {
             email: email,
-            name: "User test",
-            id: 1,
+            name: user.name,
+            id: user.id,
           },
         }),
         reply.refreshTokenSign({
           user: {
             email: email,
-            name: "User test",
-            id: 1,
+            name: user.name,
+            id: user.id,
           },
         }),
       ]);
@@ -45,10 +52,31 @@ async function routes(fastify, opts) {
   );
 
   fastify.get(
-    "/accesstoken",
-    { onRequest: fastify.refreshtoken },
+    "/refreshtoken",
+    {
+      onRequest: fastify.refreshtoken,
+      schema: {
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              token: { type: "string" },
+            },
+          },
+        },
+      },
+    },
     async function (request, reply) {
-      throw new Error("No documents found");
+      try {
+        const user = await request.user;
+        console.log(user);
+        const accessToken = await reply.jwtSign({ user });
+
+        return { token: accessToken };
+      } catch (e) {
+        fastify.log.error(e);
+        throw e;
+      }
     }
   );
 }

@@ -1,16 +1,24 @@
 @host=http://localhost:8080
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NTk0NzY4NTB9.ecjfHxFUkW9Ov6S733aSbi83wkPo0Wx-kM12wAntqiA
-
-###
+# @name login
 POST {{host}}/v1/auth/signin
 Content-Type: application/json
 
-{"email":"ace@user.com","password":"hello"}
+{"email":"bads@user.com","password":"hello"}
 
 ###
-GET {{host}}/v1/test 
+@token = {{login.response.body.token}}
+@refreshToken= {{login.response.body.refreshToken}}
+
+###
+GET {{host}}/v1/sample 
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/v1/test/refreshtoken
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYWNlQHVzZXIuY29tIiwibmFtZSI6IlVzZXIgdGVzdCIsImlkIjoxfSwiaWF0IjoxNzU5MzkwNDUwLCJleHAiOjE3NjE5ODI0NTB9.TFf-QzxwIbUt4wo3k0PH7s25PWjGt3x1If2D8imicLM
+GET {{host}}/v1/auth/refreshtoken
+Authorization: Bearer {{refreshToken}}
+
+###
+GET {{host}}/metrics
+
+###
+GET {{host}}/

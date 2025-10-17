@@ -5,7 +5,9 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { configDotenv } from "dotenv";
 import prisma from "./services/db.js";
-import mailer from "./services/email.js";
+import mailer from "./plugins/email.js";
+import azureblob from "./plugins/azureblob.js";
+import metrics from "./plugins/metrics.js";
 
 /**
  *
@@ -17,7 +19,27 @@ async function build(opts = {}) {
   /**
    * @type {import('fastify').FastifyInstance} Instance of Fastify
    */
-  const fastify = Fastify(opts);
+  const fastify = Fastify({
+    ...opts,
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+          path: request.routerPath,
+          parameters: request.params,
+          headers: request.headers,
+        };
+      },
+      res(reply) {
+        return {
+          statusCode: reply.statusCode,
+          responseTime: reply.getResponseTime(),
+        };
+      },
+    },
+    redact: ["req.headers.authorization", "body.password"],
+  });
 
   // Path configuration
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,20 +54,26 @@ async function build(opts = {}) {
       },
       servers: [
         {
-          url: "http://localhost:8080",
+          url: "http://127.0.0.1:8080",
           description: "Development server",
         },
       ],
       tags: [{ name: "v1", description: "versioning related end-points" }],
       components: {
         securitySchemes: {
-          http: {
+          bearerAuth: {
             type: "http",
             scheme: "bearer",
             bearerFormat: "JWT",
           },
         },
       },
+      security: [
+        // Apply the security globally or to specific routes
+        {
+          bearerAuth: [], // Use the same name as above
+        },
+      ],
       externalDocs: {
         url: "https://swagger.io",
         description: "Find more info here",
@@ -81,8 +109,15 @@ async function build(opts = {}) {
   });
 
   fastify.register(mailer, { mailer: "gmail" });
+  fastify.register(azureblob, {
+    containerName: "test",
+    azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  });
+  fastify.register(metrics);
+  fastify.register(import("@fastify/sensible"));
 
   // load decorator here
+  // authenticate routes with jwt
   fastify.decorate("authenticate", async function (request, reply) {
     try {
       const result = await request.jwtVerify();
@@ -92,6 +127,7 @@ async function build(opts = {}) {
     }
   });
 
+  // authenticate routes for get new access token with existing refreshtoken
   fastify.decorate("refreshtoken", async function (request, reply) {
     try {
       const result = await request.refreshTokenVerify();
