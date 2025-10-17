@@ -6,7 +6,7 @@ This project will help you quickly start building RESTful API with Fastify and P
 2. JWT Authorization, with example: protect per route or per endpoint
 3. Simple Authentication with email and password
 4. Prisma database connection already configured you just need to provide a correct connection to your database
-5. OpenAPI ready with auto generation documentation based on routes and json schema
+5. OpenAPI ready with documentation generated based on routes and json schema
 6. Password hashing with bcrypt
 7. Expose metrics for Prometheus
 
@@ -32,4 +32,5 @@ Open [http://localhost:8080](http://localhost:8080) with your browser to see the
 
 ### OpenAPI Doc
 For OpenAPI Doc open [http://localhost:8080/documentation](http://localhost:8080/documentation) 
+
 
