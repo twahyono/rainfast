@@ -117,12 +117,14 @@ async function routes(fastify, opts) {
     async function (request, reply) {
       const parts = request.files();
       for await (const part of parts) {
+        const filename = part.filename;
         await pipeline(
           part.file,
-          fs.createWriteStream(path.join(__dirname, "upload", data.filename))
+          fs.createWriteStream(
+            path.join(__dirname, "../../../upload", filename)
+          )
         );
       }
-      reply.send();
       reply.send({ message: "File uploaded." });
     }
   );
@@ -170,7 +172,8 @@ async function routes(fastify, opts) {
         const fileBuffer = await fsPromise.readFile(
           path.join(__dirname, "../../../upload/" + filename)
         );
-        reply.send(fileBuffer);
+        reply.header("Content-Type", "application/octet-stream");
+        return reply.send(fileBuffer);
       } catch (err) {
         reply.send(err);
       }

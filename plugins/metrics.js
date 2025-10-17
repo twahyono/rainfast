@@ -4,12 +4,14 @@ const register = new client.Registry();
 
 // Example metric: HTTP request counter
 const httpRequestsTotal = new client.Counter({
+  prefix: "rainfast_",
   name: "http_requests_total",
   help: "Total number of HTTP requests",
   labelNames: ["method", "path", "status"],
 });
 
 const httpRequestDurationSeconds = new client.Histogram({
+  prefix: "rainfast_",
   name: "http_request_duration_seconds",
   help: "HTTP request duration in seconds",
   labelNames: ["method", "path", "status"],
@@ -21,7 +23,7 @@ register.registerMetric(httpRequestDurationSeconds);
 // Optional: default metrics (CPU, memory, etc.)
 client.collectDefaultMetrics({ register });
 
-export default fp(function (fastify, opts, done) {
+export default fp(function (fastify, _opts, done) {
   fastify.decorateReply("metrics", async () => register.metrics());
   fastify.addHook("onResponse", async (req, res) => {
     httpRequestsTotal.inc({
