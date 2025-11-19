@@ -109,10 +109,10 @@ async function build(opts = {}) {
   });
 
   fastify.register(mailer, { mailer: "gmail" });
-  fastify.register(azureblob, {
-    containerName: "test",
-    azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
-  });
+  // fastify.register(azureblob, {
+  //   containerName: "test",
+  //   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  // });
   fastify.register(metrics);
   fastify.register(import("@fastify/sensible"));
 
