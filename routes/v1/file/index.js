@@ -66,7 +66,7 @@ async function routes(fastify, opts) {
 
       await pipeline(
         data.file,
-        fs.createWriteStream(path.join("upload", data.filename))
+        fs.createWriteStream(path.join("/upload", data.filename))
       );
       // check if file truncated because it break size limit
       if (data.file.truncated) {
