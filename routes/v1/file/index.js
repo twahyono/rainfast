@@ -139,9 +139,7 @@ async function routes(fastify, opts) {
       try {
         const filename = request.params.filename;
         await new Promise((res) => setTimeout(res, 100));
-        const stream = fs.createReadStream(
-          path.join(__dirname, "../../../upload/" + filename)
-        );
+        const stream = fs.createReadStream(path.join("/upload/" + filename));
         reply.header("Content-Type", "application/octet-stream");
         return reply.send(stream);
       } catch (e) {
