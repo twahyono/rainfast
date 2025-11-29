@@ -80,7 +80,7 @@ async function routes(fastify, opts) {
             email: { type: "string" },
             password: {
               type: "string",
-              pattern: "^(?=.*[A-Za-z])(?=.*d)[A-Za-zd]{8,}$",
+              pattern: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
             },
           },
         },
