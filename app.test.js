@@ -1,13 +1,11 @@
 "use strict";
 import build from "./app.js";
-import { test } from "node:test";
+import { describe, it, assert, after } from "node:test";
 
-test("Version check", async (t) => {
-  t.plan(3);
-
+describe("Version check", async (t) => {
   const fastify = await build();
 
-  t.after(() => fastify.close());
+  after(() => fastify.close());
 
   await fastify.listen();
 
@@ -15,11 +13,11 @@ test("Version check", async (t) => {
     "http://localhost:" + fastify.server.address().port
   );
 
-  t.assert.strictEqual(response.status, 200);
-  t.assert.strictEqual(
+  assert.strictEqual(response.status, 200);
+  assert.strictEqual(
     response.headers.get("content-type"),
     "application/json; charset=utf-8"
   );
   const jsonResult = await response.json();
-  t.assert.strictEqual(jsonResult.version, "0.02.0");
+  assert.strictEqual(jsonResult.version, "0.02.0");
 });
