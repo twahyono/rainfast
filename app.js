@@ -43,7 +43,10 @@ async function build(opts = {}) {
 
   // Path configuration
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
+  await fastify.register(import("@fastify/rate-limit"), {
+    max: 100,
+    timeWindow: "1 minute",
+  });
   await fastify.register(import("@fastify/swagger"), {
     openapi: {
       openapi: "3.0.0",
@@ -109,10 +112,10 @@ async function build(opts = {}) {
   });
 
   fastify.register(mailer, { mailer: "gmail" });
-  fastify.register(azureblob, {
-    containerName: "test",
-    azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
-  });
+  // fastify.register(azureblob, {
+  //   containerName: "test",
+  //   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+  // });
   fastify.register(metrics);
   fastify.register(import("@fastify/sensible"));
 

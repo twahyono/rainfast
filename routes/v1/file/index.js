@@ -66,9 +66,7 @@ async function routes(fastify, opts) {
 
       await pipeline(
         data.file,
-        fs.createWriteStream(
-          path.join(__dirname, "../../../upload", data.filename)
-        )
+        fs.createWriteStream(path.join("/upload", data.filename))
       );
       // check if file truncated because it break size limit
       if (data.file.truncated) {
@@ -120,9 +118,7 @@ async function routes(fastify, opts) {
         const filename = part.filename;
         await pipeline(
           part.file,
-          fs.createWriteStream(
-            path.join(__dirname, "../../../upload", filename)
-          )
+          fs.createWriteStream(path.join("upload", filename))
         );
       }
       reply.send({ message: "File uploaded." });
@@ -143,9 +139,7 @@ async function routes(fastify, opts) {
       try {
         const filename = request.params.filename;
         await new Promise((res) => setTimeout(res, 100));
-        const stream = fs.createReadStream(
-          path.join(__dirname, "../../../upload/" + filename)
-        );
+        const stream = fs.createReadStream(path.join("/upload/" + filename));
         reply.header("Content-Type", "application/octet-stream");
         return reply.send(stream);
       } catch (e) {
