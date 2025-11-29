@@ -44,8 +44,8 @@ async function build(opts = {}) {
   // Path configuration
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   await fastify.register(import("@fastify/rate-limit"), {
-    max: 100,
-    timeWindow: "1 minute",
+    max: process.env.RATE_LIMIT_MAX || 100,
+    timeWindow: process.env.RATE_LIMIT_TIME_WINDOW || "1 minute",
   });
   await fastify.register(import("@fastify/swagger"), {
     openapi: {

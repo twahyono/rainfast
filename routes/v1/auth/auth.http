@@ -3,7 +3,7 @@
 POST {{host}}/v1/auth/signin
 Content-Type: application/json
 
-{"email":"bads@user.com","password":"hello"}
+{"email":"bads@user.com","password":"hello1d3"}
 
 ###
 @token = {{login.response.body.token}}
