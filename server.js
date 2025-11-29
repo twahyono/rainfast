@@ -25,7 +25,8 @@ async function checkDatabaseConnection(app) {
     app.log.info("Database connection established");
     return true;
   } catch (error) {
-    app.log.error("Database connection failed:", error);
+    console.error("Database connection failed:", String(error));
+    app.log.error("Database connection failed:", String(error));
     return true;
   }
 }
